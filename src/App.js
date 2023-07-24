@@ -23,14 +23,27 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
+      const user = JSON.parse(window.localStorage.getItem('loggedBlogappUser'));
+      if(isTokenValid(user)){
       setUser(user)
       blogService.setToken(user.token)
-    }
+      } else {
+        window.localStorage.removeItem('loggedBlogappUser')
+        
+      }
+    
   }, [])
   
+  const isTokenValid = (user) => {
+    
+  if (!user || !user.expirationTime) {
+    
+    return false;
+  }
+
+  const currentTime = new Date().getTime();
+  return currentTime < user.expirationTime;
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -39,8 +52,10 @@ const App = () => {
         username, password,
       })
 
+
+      const expirationTime = new Date().getTime() + 3600 * 1000 // 1 hour
       window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
+        'loggedBlogappUser', JSON.stringify({...user, expirationTime})
       )
       
       blogService.setToken(user.token)
@@ -138,6 +153,15 @@ const App = () => {
     <div className='notification'>{notification}</div>
   )
 
+  const logOut = () => {
+    if(window.confirm('Are you sure you want to logout?')){
+    window.localStorage.removeItem('loggedBlogappUser')
+    window.location.reload()
+    }
+  }
+    
+  
+
   
 
   return (
@@ -147,7 +171,7 @@ const App = () => {
       {user === null ?
       loginForm() :
       <div>
-        <p>{user.name} logged-in</p>
+        <p>{user.name} logged in </p><button onClick={() => logOut()}>logout</button>
         {blogForm()}
         <br/>
         {blogs.map(blog =>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import './index.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -63,7 +64,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      setErrorMessage('Wrong username or password')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -104,14 +105,31 @@ const App = () => {
       url: newUrl
     }
 
-    setNewTitle('')
-    setNewAuthor('')
-    setNewUrl('')
+    
 
     const response = await blogService.create(newBlog)
     setBlogs(blogs.concat(response))
+    setNotification(`a new blog ${newTitle} by ${newAuthor} added`)
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
+
+    setNewTitle('')
+    setNewAuthor('')
+    setNewUrl('')
     
   }
+
+  const notificationMessage = () => (
+   
+    <div className='notification'>{notification}</div>
+  )
+
+  const errorMessageNotification = () => (
+   
+    <div className='error'>{errorMessage}</div>
+  )
+
 
 
   const blogForm = () => (
@@ -149,9 +167,7 @@ const App = () => {
       </form>
   )
 
-  const notificationMessage = () => (
-    <div className='notification'>{notification}</div>
-  )
+ 
 
   const logOut = () => {
     if(window.confirm('Are you sure you want to logout?')){
@@ -167,6 +183,8 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      {notification && notificationMessage()}
+      {errorMessage && errorMessageNotification()}
 
       {user === null ?
       loginForm() :

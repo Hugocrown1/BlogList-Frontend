@@ -10,11 +10,6 @@ import './index.css'
 const App = () => {
   const [loginVisible, setLoginVisible] = useState(false)
   const [blogs, setBlogs] = useState([])
-  
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
-
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
@@ -78,26 +73,16 @@ const App = () => {
     console.log('logging in with', username, password)
   }
 
-  const handleNewBlog = async (e) => {
-    e.preventDefault()
-    const newBlog = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
-    }
-
+  const createBlog = async (blogObject) => {
     
 
-    const response = await blogService.create(newBlog)
+    const response = await blogService.create(blogObject)
     setBlogs(blogs.concat(response))
-    setNotification(`a new blog ${newTitle} by ${newAuthor} added`)
+    setNotification(`a new blog ${blogObject.title} by ${blogObject.author} added`)
     setTimeout(() => {
       setNotification(null)
     }, 5000)
 
-    setNewTitle('')
-    setNewAuthor('')
-    setNewUrl('')
     
   }
 
@@ -112,19 +97,7 @@ const App = () => {
   )
 
 
-  const handleChange = (e) => {
-    const { name, value} = e.target;
 
-    if (name === 'title') {
-      setNewTitle(value);
-    } else if (name === 'author') {
-      setNewAuthor(value);
-    } else if (name === 'url'){
-      setNewUrl(value)
-    }
-  }
-
- 
 
   const logOut = () => {
     if(window.confirm('Are you sure you want to logout?')){
@@ -133,7 +106,6 @@ const App = () => {
     }
   }
     
-  
 
   
 
@@ -160,7 +132,7 @@ const App = () => {
         {
 
           <Togglable buttonLabel='create a new blog'>
-            <BlogForm handleChange={handleChange} handleNewBlog={handleNewBlog} newTitle={newTitle} newAuthor={newAuthor} newUrl={newUrl}/>
+            <BlogForm createBlog={createBlog}/>
           </Togglable>
         }
         <br/>

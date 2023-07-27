@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
@@ -8,7 +8,6 @@ import loginService from './services/login'
 import './index.css'
 
 const App = () => {
-  const [loginVisible, setLoginVisible] = useState(false)
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
@@ -16,13 +15,17 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [notification, setNotification] = useState(null)
 
+  const blogFormRef = useRef()
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs ),
-    
+      setBlogs( blogs),
     ) 
     
   }, [])
+
+
+  
 
   useEffect(() => {
       const user = JSON.parse(window.localStorage.getItem('loggedBlogappUser'));
@@ -62,6 +65,12 @@ const App = () => {
       
       blogService.setToken(user.token)
       setUser(user)
+
+      blogService.getAll().then(blogs =>
+        setBlogs( blogs ),
+      
+      ) 
+      
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -75,7 +84,7 @@ const App = () => {
 
   const createBlog = async (blogObject) => {
     
-
+    blogFormRef.current.toggleVisibility()
     const response = await blogService.create(blogObject)
     setBlogs(blogs.concat(response))
     setNotification(`a new blog ${blogObject.title} by ${blogObject.author} added`)
@@ -84,6 +93,19 @@ const App = () => {
     }, 5000)
 
     
+  }
+
+  // excercise 5.8
+  const updateBlog = async (id, blogObject) => {
+    try {
+      
+      const response = await blogService.update(id, blogObject);
+      setBlogs(blogs.map(blog => (blog.id !== id ? blog : response)));
+      
+    } catch (error) {
+      
+      console.error('Error updating the blog:', error);
+    }
   }
 
   const notificationMessage = () => (
@@ -130,14 +152,17 @@ const App = () => {
         <p>{user.name} logged in </p><button onClick={() => logOut()}>logout</button>
         
         {
+          // excercise 5.5
 
-          <Togglable buttonLabel='create a new blog'>
+          <Togglable buttonLabel='create a new blog' ref={blogFormRef}>
+            
+            {/* // excercise 5.6 */}
             <BlogForm createBlog={createBlog}/>
           </Togglable>
         }
         <br/>
         {blogs.map(blog =>
-      <Blog key={blog.id} blog={blog} />
+      <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
     )}
         
       </div>

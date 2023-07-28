@@ -18,19 +18,20 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs),
-    ) 
-    
-  }, [])
-
-
+  blogService.getAll().then(blogs => {
+    // excercise 5.9
+    const sortedBlogs = blogs.slice().sort((blogA, blogB) => blogB.likes - blogA.likes);
+    setBlogs(sortedBlogs);
+  });
   
+}, []);
+
 
   useEffect(() => {
       const user = JSON.parse(window.localStorage.getItem('loggedBlogappUser'));
       if(isTokenValid(user)){
       setUser(user)
+      
       blogService.setToken(user.token)
       } else {
         window.localStorage.removeItem('loggedBlogappUser')
@@ -108,6 +109,17 @@ const App = () => {
     }
   }
 
+  // excercise 5.10
+  const deleteBlog = async (blogObject) => {
+    if(window.confirm(`Remove ${blogObject.title} by ${blogObject.author}`)){
+    await blogService.remove(blogObject.id)
+    const remainBlogs = blogs.filter(blog => blog.id !== blogObject.id)
+    setBlogs(remainBlogs)
+    }
+  }
+  
+
+
   const notificationMessage = () => (
    
     <div className='notification'>{notification}</div>
@@ -162,7 +174,7 @@ const App = () => {
         }
         <br/>
         {blogs.map(blog =>
-      <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+      <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} user={user} />
     )}
         
       </div>

@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const Blog = ({blog, updateBlog}) => {
+const Blog = ({blog, updateBlog, deleteBlog, user}) => {
   //excercise 5.7
   const [detailedView, setDetailedView] = useState(false)
 
@@ -11,6 +11,12 @@ const Blog = ({blog, updateBlog}) => {
     
     setDetailedView(!detailedView)
   }
+
+  const removeBlog = () => {
+    deleteBlog(blog)
+  }
+
+
 
   const blogStyle = {
     paddingTop: 10,
@@ -23,8 +29,6 @@ const Blog = ({blog, updateBlog}) => {
   const addLike = () => {
     const { id, ...blogObject } = blog;
     blogObject.likes += 1;
-
-    console.log(blogObject);
     updateBlog(blog.id, blogObject)
   }
 
@@ -40,7 +44,11 @@ const Blog = ({blog, updateBlog}) => {
       <p>{blog.url}</p>
       <p>likes {blog.likes} <button onClick={addLike}>like</button></p> 
       <p>{blog.user.name}</p>
-    
+
+      {blog.user.username === user.username && (
+        <button onClick={removeBlog}>remove</button>
+      )}
+
     <button onClick={toggleDetailedView}>hide</button>
     </div>
   </div> 

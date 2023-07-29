@@ -9,8 +9,8 @@ import './index.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [notification, setNotification] = useState(null)
@@ -18,37 +18,34 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-  blogService.getAll().then(blogs => {
+    blogService.getAll().then(blogs => {
     // excercise 5.9
-    const sortedBlogs = blogs.slice().sort((blogA, blogB) => blogB.likes - blogA.likes);
-    setBlogs(sortedBlogs);
-  });
-  
-}, []);
+      const sortedBlogs = blogs.slice().sort((blogA, blogB) => blogB.likes - blogA.likes)
+      setBlogs(sortedBlogs)
+    })
+
+  }, [])
 
 
   useEffect(() => {
-      const user = JSON.parse(window.localStorage.getItem('loggedBlogappUser'));
-      if(isTokenValid(user)){
+    const user = JSON.parse(window.localStorage.getItem('loggedBlogappUser'))
+    if(isTokenValid(user)){
       setUser(user)
-      
       blogService.setToken(user.token)
-      } else {
-        window.localStorage.removeItem('loggedBlogappUser')
-        
-      }
-    
+    } else {
+      window.localStorage.removeItem('loggedBlogappUser')
+    }
   }, [])
-  
-  const isTokenValid = (user) => {
-    
-  if (!user || !user.expirationTime) {
-    
-    return false;
-  }
 
-  const currentTime = new Date().getTime();
-  return currentTime < user.expirationTime;
+  const isTokenValid = (user) => {
+
+    if (!user || !user.expirationTime) {
+
+      return false
+    }
+
+    const currentTime = new Date().getTime()
+    return currentTime < user.expirationTime
   }
 
   const handleLogin = async (e) => {
@@ -61,17 +58,17 @@ const App = () => {
 
       const expirationTime = new Date().getTime() + 3600 * 1000 // 1 hour
       window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify({...user, expirationTime})
+        'loggedBlogappUser', JSON.stringify({ ...user, expirationTime })
       )
-      
+
       blogService.setToken(user.token)
       setUser(user)
 
       blogService.getAll().then(blogs =>
         setBlogs( blogs ),
-      
-      ) 
-      
+
+      )
+
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -84,7 +81,7 @@ const App = () => {
   }
 
   const createBlog = async (blogObject) => {
-    
+
     blogFormRef.current.toggleVisibility()
     const response = await blogService.create(blogObject)
     setBlogs(blogs.concat(response))
@@ -93,40 +90,40 @@ const App = () => {
       setNotification(null)
     }, 5000)
 
-    
+
   }
 
   // excercise 5.8
   const updateBlog = async (id, blogObject) => {
     try {
-      
-      const response = await blogService.update(id, blogObject);
-      setBlogs(blogs.map(blog => (blog.id !== id ? blog : response)));
-      
+
+      const response = await blogService.update(id, blogObject)
+      setBlogs(blogs.map(blog => (blog.id !== id ? blog : response)))
+
     } catch (error) {
-      
-      console.error('Error updating the blog:', error);
+
+      console.error('Error updating the blog:', error)
     }
   }
 
   // excercise 5.10
   const deleteBlog = async (blogObject) => {
     if(window.confirm(`Remove ${blogObject.title} by ${blogObject.author}`)){
-    await blogService.remove(blogObject.id)
-    const remainBlogs = blogs.filter(blog => blog.id !== blogObject.id)
-    setBlogs(remainBlogs)
+      await blogService.remove(blogObject.id)
+      const remainBlogs = blogs.filter(blog => blog.id !== blogObject.id)
+      setBlogs(remainBlogs)
     }
   }
-  
+
 
 
   const notificationMessage = () => (
-   
+
     <div className='notification'>{notification}</div>
   )
 
   const errorMessageNotification = () => (
-   
+
     <div className='error'>{errorMessage}</div>
   )
 
@@ -135,52 +132,52 @@ const App = () => {
 
   const logOut = () => {
     if(window.confirm('Are you sure you want to logout?')){
-    window.localStorage.removeItem('loggedBlogappUser')
-    window.location.reload()
+      window.localStorage.removeItem('loggedBlogappUser')
+      window.location.reload()
     }
   }
-    
 
-  
+
+
 
   return (
     <div>
-      
+
       <h2>blogs</h2>
       {notification && notificationMessage()}
       {errorMessage && errorMessageNotification()}
 
       {user === null ?
-      <Togglable buttonLabel='login'>
-      <LoginForm
-      username={username}
-      password={password}
-      handleUsernameChange={({ target }) => setUsername(target.value)}
-      handlePasswordChange={({ target }) => setPassword(target.value)}
-      handleSubmit={handleLogin}
-    />
-    </Togglable>:
-      <div>
-        <p>{user.name} logged in </p><button onClick={() => logOut()}>logout</button>
-        
-        {
+        <Togglable buttonLabel='login'>
+          <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin}
+          />
+        </Togglable>:
+        <div>
+          <p>{user.name} logged in </p><button onClick={() => logOut()}>logout</button>
+
+          {
           // excercise 5.5
 
-          <Togglable buttonLabel='create a new blog' ref={blogFormRef}>
-            
-            {/* // excercise 5.6 */}
-            <BlogForm createBlog={createBlog}/>
-          </Togglable>
-        }
-        <br/>
-        {blogs.map(blog =>
-      <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} user={user} />
-    )}
-        
-      </div>
-    }
-      
-      
+            <Togglable buttonLabel='create a new blog' ref={blogFormRef}>
+
+              {/* // excercise 5.6 */}
+              <BlogForm createBlog={createBlog}/>
+            </Togglable>
+          }
+          <br/>
+          {blogs.map(blog =>
+            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} user={user} />
+          )}
+
+        </div>
+      }
+
+
     </div>
   )
 }

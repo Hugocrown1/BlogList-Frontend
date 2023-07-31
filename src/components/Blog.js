@@ -33,12 +33,12 @@ const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
   }
 
   return (
-    <div style={blogStyle}>
-      <div style={hideWhenVisible}>
+    <div  style={blogStyle}>
+      <div className='blog' style={hideWhenVisible}>
         {blog.title} {blog.author}
         <button onClick={toggleDetailedView}>view</button>
       </div>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className='togglableContent'>
 
         <p>{blog.title} by {blog.author}</p>
         <p>{blog.url}</p>

@@ -1,13 +1,14 @@
 describe('Blog app', function() {
   beforeEach(function() {
-    cy.request('POST', 'http://localhost:3001/api/testing/reset')
+    cy.visit('')
+    cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
     const user = {
       name: 'Joe Crown',
       username: 'daedalus',
       password: 'secretito'
     }
-    cy.request('POST', 'http://localhost:3001/api/users/', user)
-    cy.visit('http://localhost:3000')
+    cy.request('POST', `${Cypress.env('BACKEND')}/users`, user)
+
   })
   it('front page can be opened', function() {
     cy.contains('blogs')
@@ -22,7 +23,7 @@ describe('Blog app', function() {
     cy.contains('Joe Crown logged in')
   })
 
-  it.only('login fails with wrong password', function() {
+  it('login fails with wrong password', function() {
     cy.contains('login').click()
     cy.get('#username').type('daedalus')
     cy.get('#password').type('malito')
@@ -34,10 +35,13 @@ describe('Blog app', function() {
 
   describe('when logged in', function() {
     beforeEach(function() {
-      cy.contains('login').click()
-      cy.get('input:first').type('daedalus')
-      cy.get('input:last').type('secretito')
-      cy.get('#login-button').click()
+      cy.login({ username: 'daedalus', password: 'secretito' })
+
+      // cy.contains('login').click()
+      // cy.get('#username').type('daedalus')
+      // cy.get('#password').type('secretito')
+      // cy.get('#login-button').click()
+
     })
 
     it('a new blog can be created', function() {
@@ -49,5 +53,18 @@ describe('Blog app', function() {
 
       cy.contains('Cypress chad')
     })
+
+    describe('and a blog exists', function () {
+      beforeEach(function () {
+        cy.createBlog({
+          title: 'Another one bites the dust',
+          author: 'Freddie Mercurio',
+          url: 'www.killerqueen.com'
+        })
+      })
+
+
+    })
+
   })
 })

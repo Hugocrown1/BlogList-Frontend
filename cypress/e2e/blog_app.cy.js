@@ -99,7 +99,7 @@ describe('Blog app', function() {
         })
 
         // excercise 5.23
-        it.only('blogs are sorted by number of likes', function() {
+        it('blogs are sorted by number of likes', function() {
           cy.createBlog({
             title: 'Devil May Cry',
             author: 'Dante Sparda',

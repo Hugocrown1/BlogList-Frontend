@@ -158,7 +158,7 @@ const App = () => {
           />
         </Togglable>:
         <div>
-          <p>{user.name} logged in </p><button onClick={() => logOut()}>logout</button>
+          <p>{user.name} logged in </p><button className='logOutButton' onClick={() => logOut()}>logout</button>
 
           {
           // excercise 5.5

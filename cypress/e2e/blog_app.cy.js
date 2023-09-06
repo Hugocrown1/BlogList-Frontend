@@ -43,7 +43,7 @@ describe('Blog app', function() {
 
     })
 
-    // excercise 5.19
+    // exercise 5.19
     it('a new blog can be created', function() {
       cy.contains('create a new blog').click()
       cy.get('#title').type('Cypress chad')
@@ -63,14 +63,14 @@ describe('Blog app', function() {
         })
       })
 
-      // excercise 5.20
+      // exercise 5.20
       it('a blog can be liked', function() {
         cy.contains('Another one bites the dust').contains('view').click()
         cy.contains('likes 0').contains('like').click()
         cy.contains('likes 1')
       })
 
-      // excercise 5.21
+      // exercise 5.21
       it('a blog can be deleted', function() {
         cy.contains('Another one bites the dust').contains('view').click()
         cy.get('.removeBlogButton').click()
@@ -92,13 +92,13 @@ describe('Blog app', function() {
           cy.visit('')
         })
 
-        // excercise 5.22
+        // exercise 5.22
         it('a blog from another user cannot be deleted', function() {
           cy.contains('Another one bites the dust').contains('view').click()
           cy.get('.removeBlogButton').should('not.exist')
         })
 
-        // excercise 5.23
+        // exercise 5.23
         it('blogs are sorted by number of likes', function() {
           cy.createBlog({
             title: 'Devil May Cry',

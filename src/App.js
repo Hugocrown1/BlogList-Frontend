@@ -7,19 +7,31 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import './index.css'
 
+import { useSelector, useDispatch } from 'react-redux'
+import { setNotification } from './reducers/notificationReducer'
+
+
+
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [notification, setNotification] = useState(null)
+
+
+
+  //Exercise 7.11
+  const notification = useSelector( state => {
+
+    return state.notification} )
+  const dispatch = useDispatch()
 
   const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs => {
-    // excercise 5.9
+    // exercise 5.9
       const sortedBlogs = blogs.slice().sort((blogA, blogB) => blogB.likes - blogA.likes)
       setBlogs(sortedBlogs)
     })
@@ -72,10 +84,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('Wrong username or password')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      dispatch(setNotification('wrong username or password', 'error', 5))
     }
     console.log('logging in with', username, password)
   }
@@ -85,10 +94,8 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
     const response = await blogService.create(blogObject)
     setBlogs(blogs.concat(response))
-    setNotification(`a new blog ${blogObject.title} by ${blogObject.author} added`)
-    setTimeout(() => {
-      setNotification(null)
-    }, 5000)
+    dispatch(setNotification(`a new blog ${blogObject.title} by ${blogObject.author} added`, 'success', 5))
+
 
 
   }
@@ -117,15 +124,12 @@ const App = () => {
 
 
 
-  const notificationMessage = () => (
+  const showNotification = () => {
+    const { type, message } = notification
 
-    <div className='notification'>{notification}</div>
-  )
+    return <div className={type}>{message}</div>
+  }
 
-  const errorMessageNotification = () => (
-
-    <div className='error'>{errorMessage}</div>
-  )
 
 
 
@@ -144,8 +148,8 @@ const App = () => {
     <div>
 
       <h2>blogs</h2>
-      {notification && notificationMessage()}
-      {errorMessage && errorMessageNotification()}
+      {notification.message && showNotification()}
+
 
       {user === null ?
         <Togglable buttonLabel='login'>

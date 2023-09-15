@@ -1,4 +1,7 @@
+import { Button, TextField, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
+
+
 
 const LoginForm = ({
   handleSubmit,
@@ -7,28 +10,32 @@ const LoginForm = ({
   username,
   password
 }) => {
+
+
   return (
     <div>
-      <h2>Login</h2>
+      <Typography variant='h4'>Login</Typography>
       <form onSubmit={handleSubmit}>
-        <div>
-           username
-          <input
+        <div style={{ marginTop: 10, marginBottom: 10 }}>
+          <TextField
+            size='small'
+            label='username'
             id='username'
             value={username}
             onChange={handleUsernameChange}
           />
         </div>
         <div>
-           password
-          <input
+          <TextField
+            size='small'
+            label='password'
             id='password'
             type="password"
             value={password}
             onChange={handlePasswordChange}
           />
         </div>
-        <button id="login-button" type="submit">login</button>
+        <Button variant='contained' sx={{ my: 1 }} id="login-button" type="submit">login</Button>
       </form>
     </div>
   )

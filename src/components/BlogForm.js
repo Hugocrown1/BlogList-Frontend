@@ -1,3 +1,4 @@
+import { Button, TextField, Typography } from '@mui/material'
 import React, { useState } from 'react'
 
 const BlogForm = ({ createBlog }) => {
@@ -17,6 +18,8 @@ const BlogForm = ({ createBlog }) => {
     }
   }
 
+
+
   const addBlog = (e) => {
     e.preventDefault()
     createBlog({
@@ -31,13 +34,18 @@ const BlogForm = ({ createBlog }) => {
   }
 
 
+
+
+
+
   return (
     <div className={'formDiv'}>
-      <h2>create a new blog</h2>
+      <Typography variant='h5' sx={{ mb: 2 }}>create a new blog</Typography>
       <form onSubmit={addBlog}>
-        <div>
-              Title:
-          <input
+        <div style={{ marginTop: 5, marginBottom: 5 }}>
+          <TextField
+            size='small'
+            label='Title'
             id='title'
             type="text"
             value={newTitle}
@@ -45,9 +53,10 @@ const BlogForm = ({ createBlog }) => {
             onChange={handleChange}
           />
         </div>
-        <div>
-              Author:
-          <input
+        <div style={{ marginTop: 5, marginBottom: 5 }}>
+          <TextField
+            size='small'
+            label='Author'
             id='author'
             type="text"
             value={newAuthor}
@@ -55,9 +64,10 @@ const BlogForm = ({ createBlog }) => {
             onChange={handleChange}
           />
         </div>
-        <div>
-              Url:
-          <input
+        <div style={{ marginTop: 5, marginBottom: 5 }}>
+          <TextField
+            size='small'
+            label='Url'
             id='url'
             type="text"
             value={newUrl}
@@ -65,7 +75,7 @@ const BlogForm = ({ createBlog }) => {
             onChange={handleChange}
           />
         </div>
-        <button id='create-blog-button' type="submit">create</button>
+        <Button sx={{ my: 1 }} variant='contained' id='create-blog-button' type="submit">create</Button>
       </form>
     </div>
   )
